@@ -8,6 +8,7 @@
 .vscode/
 /builds
 build
+/install/
 /build_overrides.cmake
 build.release
 build.debug
