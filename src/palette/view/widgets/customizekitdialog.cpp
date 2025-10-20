@@ -82,6 +82,7 @@ NoteHeadGroup noteHeadNames[] = {
     NoteHeadGroup::HEAD_CROSS,
     NoteHeadGroup::HEAD_PLUS,
     NoteHeadGroup::HEAD_XCIRCLE,
+    NoteHeadGroup::HEAD_CROSS_CIRCLE,
     NoteHeadGroup::HEAD_WITHX,
     NoteHeadGroup::HEAD_TRIANGLE_UP,
     NoteHeadGroup::HEAD_TRIANGLE_DOWN,

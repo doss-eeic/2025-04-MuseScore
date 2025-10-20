@@ -1536,6 +1536,7 @@ static NoteHeadGroup convertNotehead(String mxmlName)
         { u"cross", NoteHeadGroup::HEAD_PLUS },
         { u"x", NoteHeadGroup::HEAD_CROSS },
         { u"circle-x", NoteHeadGroup::HEAD_XCIRCLE },
+        { u"circle-cross", NoteHeadGroup::HEAD_CROSS_CIRCLE },
         { u"inverted triangle", NoteHeadGroup::HEAD_TRIANGLE_DOWN },
         { u"slashed", NoteHeadGroup::HEAD_SLASHED1 },
         { u"back slashed", NoteHeadGroup::HEAD_SLASHED2 },

@@ -1127,6 +1127,7 @@ static const std::vector<Item<NoteHeadGroup> > NOTEHEAD_GROUPS = {
     { NoteHeadGroup::HEAD_CROSS,            "cross",          muse::TranslatableString("engraving/noteheadgroup", "Cross") },
     { NoteHeadGroup::HEAD_PLUS,             "plus",           muse::TranslatableString("engraving/noteheadgroup", "Plus") },
     { NoteHeadGroup::HEAD_XCIRCLE,          "xcircle",        muse::TranslatableString("engraving/noteheadgroup", "XCircle") },
+    { NoteHeadGroup::HEAD_CROSS_CIRCLE,     "cross-circle",   muse::TranslatableString("engraving/noteheadgroup", "CrossCircle") },
     { NoteHeadGroup::HEAD_WITHX,            "withx",          muse::TranslatableString("engraving/noteheadgroup", "With X") },
     { NoteHeadGroup::HEAD_TRIANGLE_UP,      "triangle-up",    muse::TranslatableString("engraving/noteheadgroup", "Triangle up") },
     { NoteHeadGroup::HEAD_TRIANGLE_DOWN,    "triangle-down",  muse::TranslatableString("engraving/noteheadgroup", "Triangle down") },

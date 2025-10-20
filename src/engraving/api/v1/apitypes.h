@@ -648,6 +648,7 @@ enum class NoteHeadGroup {
     HEAD_CROSS           = int(mu::engraving::NoteHeadGroup::HEAD_CROSS),
     HEAD_PLUS            = int(mu::engraving::NoteHeadGroup::HEAD_PLUS),
     HEAD_XCIRCLE         = int(mu::engraving::NoteHeadGroup::HEAD_XCIRCLE),
+    HEAD_CROSS_CIRCLE   = int(mu::engraving::NoteHeadGroup::HEAD_CROSS_CIRCLE),
     HEAD_WITHX           = int(mu::engraving::NoteHeadGroup::HEAD_WITHX),
     HEAD_TRIANGLE_UP     = int(mu::engraving::NoteHeadGroup::HEAD_TRIANGLE_UP),
     HEAD_TRIANGLE_DOWN   = int(mu::engraving::NoteHeadGroup::HEAD_TRIANGLE_DOWN),
