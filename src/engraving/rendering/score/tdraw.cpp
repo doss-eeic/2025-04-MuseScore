@@ -2256,8 +2256,23 @@ void TDraw::draw(const Note* item, Painter* painter, const PaintOptions& opt)
             painter->setPen(config->noteBackgroundColor());
             item->drawSymbol(ldata->cachedSymNull.value(), painter);
             painter->restore();
+        }        
+
+        item->drawSymbol(ldata->cachedNoteheadSym.value(), painter);        
+        // judge if we need to draw circle around cross notehead
+        if (item->headGroup() == NoteHeadGroup::HEAD_CROSS_CIRCLE) {
+            painter->save();
+            painter->setPen(Pen(item->curColor(opt), 1.5, PenStyle::SolidLine));
+            painter->setBrush(BrushStyle::NoBrush);            
+            // calculate circle parameters
+            double noteheadWidth = item->symWidth(ldata->cachedNoteheadSym.value());
+            double circleRadius = noteheadWidth * 0.25; 
+            double xOffset = noteheadWidth * 0.5;
+            double yOffset = -circleRadius * 12.5;
+            // draw circle above cross notehead if needed
+            painter->drawEllipse(PointF(xOffset, yOffset), circleRadius, circleRadius);
+            painter->restore();
         }
-        item->drawSymbol(ldata->cachedNoteheadSym.value(), painter);
     }
 }
 

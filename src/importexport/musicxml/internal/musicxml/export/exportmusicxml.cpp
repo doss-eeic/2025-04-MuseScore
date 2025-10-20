@@ -3970,6 +3970,8 @@ static void writeNotehead(XmlWriter& xml, const Note* const note)
         xml.tagRaw(noteheadTagname, "circled");
     } else if (note->headGroup() == NoteHeadGroup::HEAD_XCIRCLE) {
         xml.tagRaw(noteheadTagname, "circle-x");
+    } else if (note->headGroup() == NoteHeadGroup::HEAD_CROSS_CIRCLE) {
+        xml.tagRaw(noteheadTagname, "circle-cross");
     } else if (note->headGroup() == NoteHeadGroup::HEAD_TRIANGLE_DOWN) {
         xml.tagRaw(noteheadTagname, "inverted triangle");
     } else if (note->headGroup() == NoteHeadGroup::HEAD_SLASHED1) {

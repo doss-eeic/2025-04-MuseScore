@@ -469,6 +469,7 @@ enum class NoteHeadGroup : signed char {
     HEAD_CROSS,
     HEAD_PLUS,
     HEAD_XCIRCLE,
+    HEAD_CROSS_CIRCLE,
     HEAD_WITHX,
     HEAD_TRIANGLE_UP,
     HEAD_TRIANGLE_DOWN,

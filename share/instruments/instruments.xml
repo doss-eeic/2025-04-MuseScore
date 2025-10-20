@@ -7845,7 +7845,7 @@
                         <panelColumn>6</panelColumn>
                   </Drum>
                   <Drum pitch="46"> <!--Open Hi-hat-->
-                        <head>xcircle</head>
+                        <head>cross-circle</head>
                         <line>-1</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
@@ -8054,7 +8054,7 @@
                         <panelColumn>0</panelColumn>
                   </Drum>
                   <Drum pitch="46"> <!--Open Hi-hat-->
-                        <head>xcircle</head>
+                        <head>cross-circle</head>
                         <line>-1</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
@@ -8194,7 +8194,7 @@
                         <panelColumn>3</panelColumn>
                   </Drum>
                   <Drum pitch="46"> <!--Open Hi-hat-->
-                        <head>xcircle</head>
+                        <head>cross-circle</head>
                         <line>-1</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
@@ -9320,7 +9320,7 @@
                         <panelColumn>2</panelColumn>
                   </Drum>
                   <Drum pitch="46"> <!--Open Hi-hat-->
-                        <head>cross</head>
+                        <head>cross-circle</head>
                         <line>0</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
@@ -10647,7 +10647,7 @@
                         <panelColumn>7</panelColumn>
                   </Drum>
                   <Drum pitch="29"> <!--Scratch Push-->
-                        <head>xcircle</head>
+                        <head>cross-circle</head>
                         <line>-1</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
@@ -11139,7 +11139,7 @@
                         <panelColumn>2</panelColumn>
                   </Drum>
                   <Drum pitch="74"> <!--Long Guiro-->
-                        <head>xcircle</head>
+                        <head>cross-circle</head>
                         <line>-1</line>
                         <voice>0</voice>
                         <name>Open Hi-Hat</name>
