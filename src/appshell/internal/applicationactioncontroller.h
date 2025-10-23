@@ -103,7 +103,7 @@ private:
     void doOpenPreferencesDialog();
 
     void revertToFactorySettings();
-
+    void openCommandPalette();
     bool m_quiting = false;
 
     muse::async::Channel<muse::actions::ActionCodeList> m_actionsReceiveAvailableChanged;

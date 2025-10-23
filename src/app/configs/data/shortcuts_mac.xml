@@ -2,6 +2,11 @@
 <Shortcuts>
 <!-- Dev -->
     <SC>
+      <key>show-command-palette</key>
+      <seq>Meta+Shift+P</seq>
+      <autorepeat>0</autorepeat>
+    </SC>
+    <SC>
         <key>nav-dev-show-controls</key>
         <seq>Ctrl+F1</seq>
         <autorepeat>0</autorepeat>

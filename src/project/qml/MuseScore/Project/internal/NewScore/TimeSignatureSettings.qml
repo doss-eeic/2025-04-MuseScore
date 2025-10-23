@@ -31,14 +31,15 @@ FlatButton {
     id: root
 
     property var model: null
-    property string currentValueAccessibleName: root.model.timeSignatureAccessibleName(root.model.timeSignatureType,
+    property string currentValueAccessibleName: root.model ? root.model.timeSignatureAccessibleName(root.model.timeSignatureType,
                                                                                        root.model.timeSignature.numerator,
-                                                                                       root.model.timeSignature.denominator)
+                                                                                       root.model.timeSignature.denominator) : ""
 
     property alias popupAnchorItem: popup.anchorItem
 
     height: 96
     accentButton: popup.isOpened
+    enabled: root.model !== null
 
     TimeSignatureView {
         id: timeSignatureView
@@ -46,12 +47,16 @@ FlatButton {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-        numerator: root.model.musicSymbolCodes(root.model.timeSignature.numerator)
-        denominator: root.model.musicSymbolCodes(root.model.timeSignature.denominator)
-        type: root.model.timeSignatureType
+        numerator: root.model ? root.model.musicSymbolCodes(root.model.timeSignature.numerator) : []
+        denominator: root.model ? root.model.musicSymbolCodes(root.model.timeSignature.denominator) : []
+        type: root.model ? root.model.timeSignatureType : 0
     }
 
     onClicked: {
+        if (!root.model) {
+            return
+        }
+        
         if (!popup.isOpened) {
             popup.open()
         } else {
@@ -95,13 +100,13 @@ FlatButton {
                 property bool isCurrent: radioButtonList.currentIndex === model.index
 
                 ButtonGroup.group: radioButtonList.radioButtonGroup
-                width: parent.width
+                width: parent ? parent.width : 200
 
                 spacing: 30
                 leftPadding: 0
 
                 contentComponent: modelData["comp"]
-                checked: (root.model.timeSignatureType === modelData["valueRole"]) && popup.isOpened
+                checked: root.model && (root.model.timeSignatureType === modelData["valueRole"]) && popup.isOpened
 
                 navigation.name: modelData["valueRole"]
                 navigation.panel: radioButtonList.navigationPanel
@@ -109,7 +114,9 @@ FlatButton {
                 navigation.column: 0
 
                 onToggled: {
-                    root.model.timeSignatureType = modelData["valueRole"]
+                    if (root.model) {
+                        root.model.timeSignatureType = modelData["valueRole"]
+                    }
                 }
 
                 onCheckedChanged: {
@@ -127,24 +134,28 @@ FlatButton {
         TimeSignatureFraction {
             anchors.fill: parent
 
-            property string accessibleName: root.model.timeSignatureAccessibleName(AdditionalInfoModel.Fraction,
-                                                                                   numerator, denominator)
+            property string accessibleName: root.model ? root.model.timeSignatureAccessibleName(AdditionalInfoModel.Fraction,
+                                                                       numerator, denominator) : ""
 
-            enabled: (root.model.timeSignatureType === AdditionalInfoModel.Fraction)
-            availableDenominators: root.model.timeSignatureDenominators()
+            enabled: root.model && (root.model.timeSignatureType === AdditionalInfoModel.Fraction)
+            availableDenominators: root.model ? root.model.timeSignatureDenominators() : []
 
-            numerator: enabled ? root.model.timeSignature.numerator : numerator
-            denominator: enabled ? root.model.timeSignature.denominator : denominator
+            numerator: (enabled && root.model && root.model.timeSignature) ? root.model.timeSignature.numerator : 4
+            denominator: (enabled && root.model && root.model.timeSignature) ? root.model.timeSignature.denominator : 4
 
             navigationSection: popup.navigationSection
             navigationPanelOrderStart: 2
 
             onNumeratorSelected: function(value) {
-                root.model.setTimeSignatureNumerator(value)
+                if (root.model) {
+                    root.model.setTimeSignatureNumerator(value)
+                }
             }
 
             onDenominatorSelected: function(value) {
-                root.model.setTimeSignatureDenominator(value)
+                if (root.model) {
+                    root.model.setTimeSignatureDenominator(value)
+                }
             }
         }
     }
@@ -153,8 +164,7 @@ FlatButton {
         id: commonComp
 
         Item {
-            property string accessibleName: root.model.timeSignatureAccessibleName(AdditionalInfoModel.Common)
-
+            property string accessibleName: root.model ? root.model.timeSignatureAccessibleName(AdditionalInfoModel.Common): ""
             implicitWidth: commonLabel.implicitWidth
             implicitHeight: 30
 
@@ -173,7 +183,7 @@ FlatButton {
         id: cutComp
 
         Item {
-            property string accessibleName: root.model.timeSignatureAccessibleName(AdditionalInfoModel.Cut)
+            property string accessibleName: root.model ? root.model.timeSignatureAccessibleName(AdditionalInfoModel.Cut) : ""
 
             implicitWidth: cutLabel.implicitWidth
             implicitHeight: 30
