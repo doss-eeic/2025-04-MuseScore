@@ -93,6 +93,14 @@ const UiActionList ApplicationUiActions::m_actions = {
              TranslatableString("action", "Revert to factory settings")
              ),
 
+    // Command Palette
+    UiAction("show-command-palette",
+             mu::context::UiCtxAny,
+             mu::context::CTX_ANY,
+             TranslatableString("action", "Command &palette…"),
+             TranslatableString("action", "Show command palette")
+             ),
+
     // Docking
     UiAction("dock-restore-default-layout",
              mu::context::UiCtxAny,

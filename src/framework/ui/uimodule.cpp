@@ -64,6 +64,8 @@
 #include "view/qmlaccessible.h"
 #include "view/focuslistener.h"
 #include "view/qmldrag.h"
+// Command Palette
+#include "view/commandpalette/commandpalettemodel.h"
 #include "view/windowsmodel.h"
 
 #include "view/internal/errordetailsmodel.h"
@@ -185,6 +187,8 @@ void UiModule::registerUiTypes()
     qmlRegisterType<FocusListener>("Muse.Ui", 1, 0, "FocusListener");
 
     qmlRegisterType<WindowsModel>("Muse.Ui", 1, 0, "WindowsModel");
+    // Command Palette
+    qmlRegisterType<CommandPaletteModel>("Muse.Ui", 1, 0, "CommandPaletteModel");
 
 #ifdef Q_OS_MAC
     qmlRegisterType<MacOSMainWindowBridge>("Muse.Ui", 1, 0, "MainWindowBridge");

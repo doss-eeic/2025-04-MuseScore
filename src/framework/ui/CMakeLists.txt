@@ -162,6 +162,9 @@ set(MODULE_SRC
     ${CMAKE_CURRENT_LIST_DIR}/view/qmldataformatter.h
     ${CMAKE_CURRENT_LIST_DIR}/view/qmldrag.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/qmldrag.h
+    # Command Palette
+    ${CMAKE_CURRENT_LIST_DIR}/view/commandpalette/commandpalettemodel.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/view/commandpalette/commandpalettemodel.h
 
     ${CMAKE_CURRENT_LIST_DIR}/view/internal/errordetailsmodel.cpp
     ${CMAKE_CURRENT_LIST_DIR}/view/internal/errordetailsmodel.h

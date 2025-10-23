@@ -1174,6 +1174,11 @@
     <seq>Ctrl+I</seq>
     </SC>
   <SC>
+    <key>show-command-palette</key>
+    <seq>Ctrl+Shift+P</seq>
+    <autorepeat>0</autorepeat>
+    </SC>
+  <SC>
     <key>notation-context-menu</key>
     <seq>Shift+F10</seq>
     <seq>Ctrl+Shift+F10</seq>

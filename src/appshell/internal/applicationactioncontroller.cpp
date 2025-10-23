@@ -68,7 +68,7 @@ void ApplicationActionController::init()
     dispatcher()->reg(this, "preference-dialog", this, &ApplicationActionController::openPreferencesDialog);
 
     dispatcher()->reg(this, "revert-factory", this, &ApplicationActionController::revertToFactorySettings);
-
+    dispatcher()->reg(this, "show-command-palette", this, &ApplicationActionController::openCommandPalette);
     dispatcher()->reg(this, "manage-plugins", [this]() {
         interactive()->open("musescore://home?section=plugins");
     });
@@ -355,4 +355,9 @@ void ApplicationActionController::revertToFactorySettings()
             }
         });
     });
+}
+
+void ApplicationActionController::openCommandPalette()
+{
+    interactive()->open("muse://commandpalette");
 }
