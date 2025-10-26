@@ -121,6 +121,9 @@ void CommandLineParser::init()
                                           "Transpose the given score before executing the '-o' options",
                                           "options"));
 
+    m_parser.addOption(QCommandLineOption("sort-by-call-count",
+                                          "Sort profiler output by call count (overrides environment if set)"));
+
     m_parser.addOption(QCommandLineOption("page",
                                           "Use with '-o <file>', export only the specified page. "
                                           "Supported output formats: SVG, PNG, PDF, MSCZ",
@@ -269,6 +272,10 @@ void CommandLineParser::parse(int argc, char** argv)
 
     if (m_parser.isSet("session-type")) {
         m_options.startup.type = m_parser.value("session-type").toStdString();
+    }
+
+    if (m_parser.isSet("sort-by-call-count")) {
+        qputenv("MUSE_PROFILER_SORT", QByteArray("callcount"));
     }
 
     if (m_parser.isSet("register-audio-plugin")) {
