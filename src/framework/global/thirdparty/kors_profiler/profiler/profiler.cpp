@@ -541,6 +541,12 @@ struct IsLessBySum {
         return f.sumtimeMs > s.sumtimeMs;
     }
 };
+struct IsLessByCallCount {
+    bool operator()(const Profiler::Data::Func& f, const Profiler::Data::Func& s) const
+    {
+        return f.callcount > s.callcount;
+    }
+};
 }
 
 std::string Profiler::Printer::formatData(const Data& data, Data::Mode mode, int maxcount) const
@@ -551,6 +557,9 @@ std::string Profiler::Printer::formatData(const Data& data, Data::Mode mode, int
     using Funcs = std::unordered_map<std::string, Data::Func>;
     using Threads = std::unordered_map<std::thread::id, Data::Thread>;
 
+    const char* sortEnv = std::getenv("MUSE_PROFILER_SORT");
+    const bool sortByCount = sortEnv && std::string(sortEnv) == "callcount";
+
     if (mode == Data::OnlyMain || mode == Data::All) {
         std::list<Data::Func> list;
         const Funcs& funcs = data.threads.at(data.mainThread).funcs;
@@ -559,11 +568,16 @@ std::string Profiler::Printer::formatData(const Data& data, Data::Mode mode, int
             list.push_back(it->second);
         }
 
-        list.sort(IsLessBySum());
+        if (sortByCount) {
+            list.sort(IsLessByCallCount());
+        } else {
+            list.sort(IsLessBySum());
+        }
 
-        std::string info = "Main thread. Top "
+        std::string info = std::string("Main thread. Top ")
                            + std::to_string(maxcount)
-                           + " by sum time (total count: "
+                           + (sortByCount ? std::string(" by call count (total count: ")
+                                          : std::string(" by sum time (total count: "))
                            + std::to_string(list.size())
                            + ")";
 
@@ -585,11 +599,16 @@ std::string Profiler::Printer::formatData(const Data& data, Data::Mode mode, int
             }
         }
 
-        list.sort(IsLessBySum());
+        if (sortByCount) {
+            list.sort(IsLessByCallCount());
+        } else {
+            list.sort(IsLessBySum());
+        }
 
-        std::string info = "Other threads. Top "
+        std::string info = std::string("Other threads. Top ")
                            + std::to_string(maxcount)
-                           + " by sum time (total count: "
+                           + (sortByCount ? std::string(" by call count (total count: ")
+                                           : std::string(" by sum time (total count: "))
                            + std::to_string(list.size())
                            + ")";
 
