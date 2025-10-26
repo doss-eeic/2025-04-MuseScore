@@ -20,10 +20,14 @@ class CommandPaletteModel : public QAbstractListModel, public muse::async::Async
 
     Q_PROPERTY(QString searchText READ searchText WRITE setSearchText NOTIFY searchTextChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedIndexChanged)
+    Q_PROPERTY(QVariantList recentCommands READ recentCommands NOTIFY recentCommandsChanged)
 
 public:
     explicit CommandPaletteModel(QObject* parent = nullptr);
 
+    QVariantList recentCommands() const;
+    Q_INVOKABLE void clearRecentCommands();
+    
     enum Roles {
         CodeRole = Qt::UserRole + 1,
         TitleRole,
@@ -43,6 +47,7 @@ public:
     Q_INVOKABLE void load();
     Q_INVOKABLE void executeCommand(int index);
     Q_INVOKABLE void executeSelectedCommand();
+    Q_INVOKABLE void executeCommandByCode(const QString& code);
 
 public slots:
     void setSearchText(const QString& text);
@@ -52,11 +57,15 @@ signals:
     void searchTextChanged();
     void selectedIndexChanged();
     void closeRequested();
+    void recentCommandsChanged();
+
 
 private:
     void filterCommands();
     QString getShortcutForAction(const muse::actions::ActionCode& actionCode) const;  // この行を追加
     QString formatShortcut(const QString& sequence) const;  // この行を追加
+    void loadRecentCommands();
+    void saveRecentCommands();
 
 
     struct CommandItem {
@@ -71,6 +80,9 @@ private:
     QList<CommandItem> m_allCommands;
     QList<CommandItem> m_filteredCommands;
     QString m_searchText;
+    QList<CommandItem> m_recentCommands;
+    static constexpr int MAX_RECENT_COMMANDS = 5; 
+
     int m_selectedIndex = 0;
 };
 }
