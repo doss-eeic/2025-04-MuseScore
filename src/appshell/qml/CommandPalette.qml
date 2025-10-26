@@ -46,6 +46,8 @@ StyledDialogView {
 
     Component.onCompleted: {
         commandPaletteModel.load()
+        console.log("=== CommandPalette opened ===")
+        console.log("Recent commands count:", commandPaletteModel.recentCommands.length)
     }
 
     ColumnLayout {
@@ -82,6 +84,80 @@ StyledDialogView {
                 root.hide()
             }
         }
+    
+        // 最近使ったコマンド
+        StyledTextLabel {
+            Layout.fillWidth: true
+            visible: recentList.visible
+            text: qsTrc("appshell", "Recent Commands")
+            font: ui.theme.bodyBoldFont
+            horizontalAlignment: Text.AlignLeft
+        }
+
+        ListView {
+            id: recentList
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(contentHeight, 180)
+            visible: commandPaletteModel.recentCommands.length > 0 && searchField.searchText === ""
+            spacing: 4
+            clip: true
+
+            model: commandPaletteModel.recentCommands
+            
+            onVisibleChanged: {
+                console.log("recentList visible changed:", visible)
+                console.log("recentCommands length:", commandPaletteModel.recentCommands.length)
+                console.log("searchText:", searchField.searchText)
+            }
+
+            delegate: ListItemBlank {
+                width: recentList.width
+                height: 40
+                isSelected: false
+                enabled: modelData.isEnabled
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
+                    spacing: 12
+
+                    StyledTextLabel {
+                        Layout.fillWidth: true
+                        text: modelData.title
+                        font: ui.theme.bodyBoldFont
+                        horizontalAlignment: Text.AlignLeft
+                        opacity: modelData.isEnabled ? 1.0 : 0.4
+                    }
+
+                    StyledTextLabel {
+                        visible: modelData.shortcut !== ""
+                        text: modelData.shortcut
+                        font: ui.theme.bodyFont
+                        opacity: modelData.isEnabled ? 0.6 : 0.3
+                    }
+                }
+
+                onClicked: commandPaletteModel.executeCommandByCode(modelData.code)
+            }
+            ScrollBar.vertical: StyledScrollBar {}
+        }
+
+        // 区切り線
+        SeparatorLine {
+            Layout.fillWidth: true
+            visible: recentList.visible
+        }
+
+        // すべてのコマンド
+        StyledTextLabel {
+            Layout.fillWidth: true
+            text: searchField.searchText === "" 
+                  ? qsTrc("appshell", "All Commands") 
+                  : qsTrc("appshell", "Search Results")
+            font: ui.theme.bodyBoldFont
+            horizontalAlignment: Text.AlignLeft
+        }
 
         ListView {
             id: commandsList
@@ -114,7 +190,7 @@ StyledDialogView {
                         text: model.title
                         font: ui.theme.bodyBoldFont
                         horizontalAlignment: Text.AlignLeft
-                        opacity: model.isEnabled ? 1.0 : 0.4  // この行を変更（110行目付近）
+                        opacity: model.isEnabled ? 1.0 : 0.4 
                     }
 
                     StyledTextLabel {

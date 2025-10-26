@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "commandpalettemodel.h"
-
+#include <algorithm>
+#include <QSettings>
 #include "log.h"
 
 using namespace mu::appshell;
@@ -31,6 +32,7 @@ using namespace muse::shortcuts;
 CommandPaletteModel::CommandPaletteModel(QObject* parent)
     : QAbstractListModel(parent)
 {
+    loadRecentCommands();
 }
 
 int CommandPaletteModel::rowCount(const QModelIndex&) const
@@ -58,6 +60,52 @@ QVariant CommandPaletteModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
+QVariantList CommandPaletteModel::recentCommands() const
+{
+    LOGI() << "=== recentCommands() getter called ===";
+    LOGI() << "m_recentCommands size: " << m_recentCommands.size();
+    
+    QVariantList list;
+
+    for (const CommandItem& item : m_recentCommands) {
+        QVariantMap map;
+        map["code"] = QString::fromStdString(item.code);
+        map["title"] = item.title;
+        map["shortcut"] = item.shortcut;
+        map["isEnabled"] = item.isEnabled;
+        list << map;
+        LOGI() << "  - " << item.title;
+    }
+
+    LOGI() << "Returning list with " << list.size() << " items";
+    return list;
+}
+
+void CommandPaletteModel::clearRecentCommands()
+{
+    if (m_recentCommands.isEmpty()) {
+        return;
+    }
+
+    m_recentCommands.clear();
+    emit recentCommandsChanged();
+}
+
+void CommandPaletteModel::executeCommandByCode(const QString& code)
+{
+    auto it = std::find_if(m_filteredCommands.begin(), m_filteredCommands.end(),
+                           [&](const CommandItem& item) {
+                               return QString::fromStdString(item.code) == code;
+                           });
+    if (it == m_filteredCommands.end()) {
+        return;
+    }
+
+    int index = std::distance(m_filteredCommands.begin(), it);
+    executeCommand(index);
+}
+
+
 QHash<int, QByteArray> CommandPaletteModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles {
@@ -83,6 +131,9 @@ int CommandPaletteModel::selectedIndex() const
 
 void CommandPaletteModel::load()
 {
+    LOGI() << "=== CommandPaletteModel::load() called ===";
+    LOGI() << "Initial m_recentCommands size: " << m_recentCommands.size();
+    
     beginResetModel();
 
     m_allCommands.clear();
@@ -103,6 +154,39 @@ void CommandPaletteModel::load()
     m_filteredCommands = m_allCommands;
 
     endResetModel();
+
+    // 最近使ったコマンドの情報を m_allCommands から復元
+    QList<CommandItem> updatedRecentCommands;
+    for (const CommandItem& recentItem : m_recentCommands) {
+        LOGI() << "Looking for recent command: " << recentItem.code;
+        auto it = std::find_if(m_allCommands.begin(), m_allCommands.end(),
+                               [&](const CommandItem& cmd) { return cmd.code == recentItem.code; });
+        if (it != m_allCommands.end()) {
+            LOGI() << "Found: " << it->title;
+            updatedRecentCommands.append(*it);
+        } else {
+            LOGI() << "Not found in all commands";
+        }
+    }
+    
+    // デバッグ: 最近使ったコマンドがない場合、テスト用に追加
+    if (updatedRecentCommands.isEmpty() && !m_allCommands.isEmpty()) {
+        LOGI() << "Adding test recent commands for debugging";
+        // 最初の3つのコマンドをテストとして追加
+        for (int i = 0; i < qMin(3, m_allCommands.size()); ++i) {
+            updatedRecentCommands.append(m_allCommands[i]);
+        }
+    }
+    
+    m_recentCommands = updatedRecentCommands;
+    LOGI() << "Updated m_recentCommands size: " << m_recentCommands.size();
+    
+    // 最近使ったコマンドの内容をログ出力
+    for (const CommandItem& item : m_recentCommands) {
+        LOGI() << "Recent: " << item.code << " - " << item.title;
+    }
+    
+    emit recentCommandsChanged();
 
     emit selectedIndexChanged();
 }
@@ -176,6 +260,23 @@ void CommandPaletteModel::executeCommand(int index)
     const CommandItem& item = m_filteredCommands.at(index);
     LOGI() << "Executing: [" << item.code << "] " << item.title;
     dispatcher()->dispatch(item.code);
+
+    auto it = std::find_if(m_recentCommands.begin(), m_recentCommands.end(),
+                           [&](const CommandItem& cmd) { return cmd.code == item.code; });
+
+    if (it != m_recentCommands.end()) {
+        m_recentCommands.erase(it);               // 既にある場合は一度削除
+    }
+
+    m_recentCommands.prepend(item);               // 最新のものを先頭に追加
+
+    if (m_recentCommands.size() > MAX_RECENT_COMMANDS) {
+        m_recentCommands.removeLast();            // 最大件数を超えたら末尾を削除
+    }
+
+    emit recentCommandsChanged();
+    saveRecentCommands();  // 最近使ったコマンドを保存
+
     emit closeRequested();
 }
 
@@ -208,4 +309,48 @@ void CommandPaletteModel::filterCommands()
     endResetModel();
 
     emit selectedIndexChanged();
+}
+
+void CommandPaletteModel::loadRecentCommands()
+{
+    LOGI() << "=== loadRecentCommands() called ===";
+    QSettings settings;
+    settings.beginGroup("CommandPalette");
+    
+    QStringList recentCodes = settings.value("RecentCommands").toStringList();
+    LOGI() << "Loaded recent commands from QSettings: " << recentCodes.size() << " items";
+    
+    settings.endGroup();
+    
+    m_recentCommands.clear();
+    
+    for (const QString& code : recentCodes) {
+        LOGI() << "Recent command code: " << code;
+        CommandItem item;
+        item.code = code.toStdString();
+        item.title = code;
+        item.isEnabled = true;
+        m_recentCommands.append(item);
+    }
+}
+
+void CommandPaletteModel::saveRecentCommands()
+{
+    LOGI() << "=== saveRecentCommands() called ===";
+    LOGI() << "Saving " << m_recentCommands.size() << " recent commands";
+    
+    QSettings settings;
+    settings.beginGroup("CommandPalette");
+    
+    QStringList recentCodes;
+    for (const CommandItem& item : m_recentCommands) {
+        QString code = QString::fromStdString(item.code);
+        LOGI() << "Saving: " << code << " - " << item.title;
+        recentCodes.append(code);
+    }
+    
+    settings.setValue("RecentCommands", recentCodes);
+    settings.endGroup();
+    settings.sync();
+    LOGI() << "Recent commands saved to QSettings";
 }
