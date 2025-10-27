@@ -92,6 +92,9 @@ void InstrumentsSceneModule::registerUiTypes()
     qmlRegisterType<LayoutPanelTreeModel>("MuseScore.InstrumentsScene", 1, 0, "LayoutPanelTreeModel");
     qmlRegisterType<LayoutPanelContextMenuModel>("MuseScore.InstrumentsScene", 1, 0, "LayoutPanelContextMenuModel");
     qmlRegisterType<InstrumentsOnScoreListModel>("MuseScore.InstrumentsScene", 1, 0, "InstrumentsOnScoreListModel");
+    
+
+ 
 
     qmlRegisterUncreatableType<LayoutPanelItemType>("MuseScore.InstrumentsScene", 1, 0, "LayoutPanelItemType",
                                                     "Cannot create a ContainerType");
