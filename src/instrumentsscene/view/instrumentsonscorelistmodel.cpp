@@ -23,6 +23,7 @@
 #include "instrumentsonscorelistmodel.h"
 
 #include "log.h"
+#include <QDebug>
 
 using namespace muse;
 using namespace muse::uicomponents;
@@ -225,6 +226,43 @@ void InstrumentsOnScoreListModel::addInstruments(const QStringList& instrumentId
 
     setItems(items);
     verifyScoreOrder();
+}
+
+QVariantList InstrumentsOnScoreListModel::getCurrentInstrumentIds() const
+{
+    TRACEFUNC;
+    QVariantList ids;
+
+    for (const Item* it : items()) {
+        auto instrument = dynamic_cast<const InstrumentItem*>(it);
+        if (!instrument)
+            continue;
+
+        // 既存パートか新規パートかに応じて適切なIDを収集
+        if (instrument->isExistingPart) {
+            ids << instrument->id;
+        } else if (instrument->instrumentTemplate.isValid()) {
+            ids << instrument->instrumentTemplate.id.toQString();
+        }
+    }
+
+    qDebug() << "InstrumentsOnScoreListModel::getCurrentInstrumentIds: count=" << ids.size() << "ids=" << ids;
+    return ids;
+}
+
+void InstrumentsOnScoreListModel::clear()
+{
+    TRACEFUNC;
+    // 現在のアイテムを保持し、モデルを空にしてから安全に削除する
+    ItemList oldItems = this->items();
+    if (oldItems.isEmpty()) {
+        return;
+    }
+
+    setItems({}); // モデルを空にする
+    qDeleteAll(oldItems); // メモリを解放
+
+    verifyScoreOrder(); // スコア順序を検証
 }
 
 QVariant InstrumentsOnScoreListModel::currentOrder() const

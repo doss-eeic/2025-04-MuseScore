@@ -52,6 +52,11 @@ public:
     Q_INVOKABLE void load();
     Q_INVOKABLE void addInstruments(const QStringList& instrumentIdList);
 
+    // QML から呼び出すためのヘルパー: 現在のスコア上の楽器ID一覧を取得
+    Q_INVOKABLE QVariantList getCurrentInstrumentIds() const;
+    // QML から呼び出して楽器リストを安全にクリアする
+    Q_INVOKABLE void clear();
+
     Q_INVOKABLE QVariant currentOrder() const;
     Q_INVOKABLE QVariantList instruments() const;
 
