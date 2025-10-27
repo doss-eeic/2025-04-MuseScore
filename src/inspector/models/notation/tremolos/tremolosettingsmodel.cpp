@@ -25,6 +25,7 @@
 
 #include "translation.h"
 
+#include "engraving/dom/tremolosinglechord.h"
 #include "engraving/dom/tremolotwochord.h"
 
 using namespace mu::inspector;
@@ -43,14 +44,20 @@ void TremoloSettingsModel::createProperties()
 {
     m_style = buildPropertyItem(mu::engraving::Pid::TREMOLO_STYLE);
     m_direction = buildPropertyItem(mu::engraving::Pid::STEM_DIRECTION);
+    m_rollSpeed = buildPropertyItem(mu::engraving::Pid::TREMOLO_ROLL_SPEED_PERCENT);
 }
 
 void TremoloSettingsModel::requestElements()
 {
-    // the tremolo section currently only has a style setting
-    // so only tremolos which can have custom styles make it appear
-
     m_elementList.clear();
+
+    for (EngravingItem* it : m_repository->findElementsByType(ElementType::TREMOLO_SINGLECHORD)) {
+        const auto sc = item_cast<TremoloSingleChord*>(it);
+        if (sc && sc->lines() == 3) {
+            m_elementList << it;
+        }
+    }
+
     for (EngravingItem* it : m_repository->findElementsByType(ElementType::TREMOLO_TWOCHORD)) {
         if (item_cast<TremoloTwoChord*>(it)->customStyleApplicable()) {
             m_elementList << it;
@@ -60,23 +67,47 @@ void TremoloSettingsModel::requestElements()
 
 void TremoloSettingsModel::loadProperties(const PropertyIdSet& propertyIdSet)
 {
-    if (muse::contains(propertyIdSet, Pid::TREMOLO_STYLE)) {
+    bool hasTwoChord = false;
+    bool hasSingleR32 = false;
+    
+    for (EngravingItem* it : m_elementList) {
+        if (it->type() == ElementType::TREMOLO_TWOCHORD) {
+            hasTwoChord = true;
+        } else if (it->type() == ElementType::TREMOLO_SINGLECHORD) {
+            const auto sc = static_cast<TremoloSingleChord*>(it);
+            if (sc->lines() == 3) {
+                hasSingleR32 = true;
+            }
+        }
+        if (hasTwoChord && hasSingleR32) break;
+    }
+    
+    if (hasTwoChord && muse::contains(propertyIdSet, Pid::TREMOLO_STYLE)) {
         loadPropertyItem(m_style);
     }
     if (muse::contains(propertyIdSet, Pid::STEM_DIRECTION)) {
         loadPropertyItem(m_direction);
     }
+    if (hasSingleR32 && muse::contains(propertyIdSet, Pid::TREMOLO_ROLL_SPEED_PERCENT)) {
+        loadPropertyItem(m_rollSpeed);
+    }
+    
+    if (m_rollSpeed) {
+        m_rollSpeed->setIsVisible(hasSingleR32);
+        m_rollSpeed->setIsEnabled(hasSingleR32);
+    }
 }
 
 void TremoloSettingsModel::loadProperties()
 {
-    loadProperties(PropertyIdSet { Pid::TREMOLO_STYLE, Pid::STEM_DIRECTION });
+    loadProperties(PropertyIdSet { Pid::TREMOLO_STYLE, Pid::STEM_DIRECTION, Pid::TREMOLO_ROLL_SPEED_PERCENT });
 }
 
 void TremoloSettingsModel::resetProperties()
 {
     m_style->resetToDefault();
     m_direction->resetToDefault();
+    m_rollSpeed->resetToDefault();
 }
 
 void TremoloSettingsModel::onNotationChanged(const PropertyIdSet& changedPropertyIdSet, const StyleIdSet&)
@@ -92,4 +123,9 @@ PropertyItem* TremoloSettingsModel::style() const
 PropertyItem* TremoloSettingsModel::direction() const
 {
     return m_direction;
+}
+
+PropertyItem* TremoloSettingsModel::rollSpeed() const
+{
+    return m_rollSpeed;
 }

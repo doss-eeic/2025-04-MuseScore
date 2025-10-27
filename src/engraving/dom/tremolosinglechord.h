@@ -77,6 +77,9 @@ public:
     bool playTremolo() const { return m_playTremolo; }
     void setPlayTremolo(bool v) { m_playTremolo = v; }
 
+    int rollSpeedPercent() const { return m_rollSpeedPercent; }
+    void setRollSpeedPercent(int v) { m_rollSpeedPercent = v; }
+
     PropertyValue getProperty(Pid propertyId) const override;
     bool setProperty(Pid propertyId, const PropertyValue&) override;
     PropertyValue propertyDefault(Pid propertyId) const override;
@@ -102,6 +105,7 @@ private:
     muse::draw::PainterPath m_path;
     bool m_playTremolo = true;
 
-    int m_lines = 0; // derived from _subtype
+    int m_lines = 0;
+    int m_rollSpeedPercent = 100;
 };
 } // namespace mu::engraving

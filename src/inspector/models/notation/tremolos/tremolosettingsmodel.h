@@ -31,6 +31,7 @@ class TremoloSettingsModel : public AbstractInspectorModel
 
     Q_PROPERTY(PropertyItem * style READ style CONSTANT)
     Q_PROPERTY(PropertyItem * direction READ direction CONSTANT)
+    Q_PROPERTY(PropertyItem * rollSpeed READ rollSpeed CONSTANT)
 
 public:
     explicit TremoloSettingsModel(QObject* parent, IElementRepositoryService* repository);
@@ -44,12 +45,14 @@ public:
 
     PropertyItem* style() const;
     PropertyItem* direction() const;
+    PropertyItem* rollSpeed() const;
 
 private:
     void loadProperties(const mu::engraving::PropertyIdSet& allowedPropertyIdSet);
 
     PropertyItem* m_style = nullptr;
     PropertyItem* m_direction = nullptr;
+    PropertyItem* m_rollSpeed = nullptr;
 };
 }
 

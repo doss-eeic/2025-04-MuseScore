@@ -174,6 +174,10 @@ void TremoloRenderer::doRender(const EngravingItem* item, const mpe::Articulatio
         stepDurationTicks = overallDurationTicks;
     } else {
         stepDurationTicks = TremoloRenderer::stepDurationTicks(chord, tremolo.lines());
+        if (tremolo.single && preferredType == ArticulationType::Tremolo32nd) {
+            const int rollPct = tremolo.single->rollSpeedPercent();
+            stepDurationTicks = (stepDurationTicks * 100) / rollPct;
+        }
     }
 
     if (stepDurationTicks <= 0) {
