@@ -94,11 +94,7 @@ void InstrumentsSceneModule::registerUiTypes()
     qmlRegisterType<InstrumentsOnScoreListModel>("MuseScore.InstrumentsScene", 1, 0, "InstrumentsOnScoreListModel");
     
 
-    qmlRegisterSingletonType<InstrumentSetRepository>(
-        "MuseScore.InstrumentsScene", 1, 0, "InstrumentSetRepository",
-        [](QQmlEngine*, QJSEngine*) -> QObject* {
-            return new InstrumentSetRepository();
-        });
+ 
 
     qmlRegisterUncreatableType<LayoutPanelItemType>("MuseScore.InstrumentsScene", 1, 0, "LayoutPanelItemType",
                                                     "Cannot create a ContainerType");
