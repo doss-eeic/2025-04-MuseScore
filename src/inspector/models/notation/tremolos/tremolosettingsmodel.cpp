@@ -45,6 +45,10 @@ void TremoloSettingsModel::createProperties()
     m_style = buildPropertyItem(mu::engraving::Pid::TREMOLO_STYLE);
     m_direction = buildPropertyItem(mu::engraving::Pid::STEM_DIRECTION);
     m_rollSpeed = buildPropertyItem(mu::engraving::Pid::TREMOLO_ROLL_SPEED_PERCENT);
+    
+    connect(m_rollSpeed, &PropertyItem::propertyModified, this, [this]() {
+        mu::engraving::TremoloSingleChord::setPreferredRollSpeedPercent(m_rollSpeed->value().toInt());
+    });
 }
 
 void TremoloSettingsModel::requestElements()

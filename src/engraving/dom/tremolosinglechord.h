@@ -78,7 +78,9 @@ public:
     void setPlayTremolo(bool v) { m_playTremolo = v; }
 
     int rollSpeedPercent() const { return m_rollSpeedPercent; }
-    void setRollSpeedPercent(int v) { m_rollSpeedPercent = v; }
+    void setRollSpeedPercent(int v);
+
+    static void setPreferredRollSpeedPercent(int percent);
 
     PropertyValue getProperty(Pid propertyId) const override;
     bool setProperty(Pid propertyId, const PropertyValue&) override;
@@ -107,5 +109,7 @@ private:
 
     int m_lines = 0;
     int m_rollSpeedPercent = 100;
+
+    static int s_preferredRollSpeedPercent;
 };
 } // namespace mu::engraving

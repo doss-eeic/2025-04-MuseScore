@@ -22,6 +22,8 @@
 
 #include "tremolosinglechord.h"
 
+#include <algorithm>
+
 #include "draw/types/transform.h"
 
 #include "types/typesconv.h"
@@ -42,10 +44,18 @@ using namespace mu;
 using namespace muse::draw;
 using namespace mu::engraving;
 
+namespace {
+constexpr int kMinRollSpeedPercent = 1;
+constexpr int kMaxRollSpeedPercent = 400;
+}
+
 namespace mu::engraving {
+int TremoloSingleChord::s_preferredRollSpeedPercent = 100;
+
 TremoloSingleChord::TremoloSingleChord(Chord* parent)
     : EngravingItem(ElementType::TREMOLO_SINGLECHORD, parent, ElementFlag::MOVABLE)
 {
+    m_rollSpeedPercent = s_preferredRollSpeedPercent;
 }
 
 TremoloSingleChord::TremoloSingleChord(const TremoloSingleChord& t)
@@ -53,6 +63,7 @@ TremoloSingleChord::TremoloSingleChord(const TremoloSingleChord& t)
 {
     setTremoloType(t.tremoloType());
     m_durationType = t.m_durationType;
+    m_rollSpeedPercent = t.m_rollSpeedPercent;
 }
 
 TremoloSingleChord::~TremoloSingleChord()
@@ -283,6 +294,23 @@ String TremoloSingleChord::accessibleInfo() const
     return String(u"%1: %2").arg(EngravingItem::accessibleInfo(), translatedSubtypeUserName());
 }
 
+void TremoloSingleChord::setPreferredRollSpeedPercent(int percent)
+{
+    s_preferredRollSpeedPercent = std::clamp(percent, kMinRollSpeedPercent, kMaxRollSpeedPercent);
+}
+
+void TremoloSingleChord::setRollSpeedPercent(int v)
+{
+    const int clamped = std::clamp(v, kMinRollSpeedPercent, kMaxRollSpeedPercent);
+
+    if (m_rollSpeedPercent == clamped) {
+        return;
+    }
+
+    m_rollSpeedPercent = clamped;
+    setPreferredRollSpeedPercent(clamped);
+}
+
 //---------------------------------------------------------
 //   getProperty
 //---------------------------------------------------------
@@ -331,11 +359,10 @@ bool TremoloSingleChord::setProperty(Pid propertyId, const PropertyValue& val)
         setPlayTremolo(val.toBool());
         break;
     case Pid::TREMOLO_ROLL_SPEED_PERCENT: {
-        int pct = val.toInt();
-        if (pct < 1) {
-            pct = 1; // avoid zero or negative
+        setRollSpeedPercent(val.toInt());
+        if (score()) {
+            score()->setPlaylistDirty();
         }
-        setRollSpeedPercent(pct);
         break;
     }
     default:
