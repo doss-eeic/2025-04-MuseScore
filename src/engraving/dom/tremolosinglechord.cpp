@@ -297,6 +297,8 @@ PropertyValue TremoloSingleChord::getProperty(Pid propertyId) const
         return int(-1);
     case Pid::PLAY:
         return m_playTremolo;
+    case Pid::TREMOLO_ROLL_SPEED_PERCENT:
+        return m_rollSpeedPercent;
     default:
         break;
     }
@@ -328,6 +330,14 @@ bool TremoloSingleChord::setProperty(Pid propertyId, const PropertyValue& val)
     case Pid::PLAY:
         setPlayTremolo(val.toBool());
         break;
+    case Pid::TREMOLO_ROLL_SPEED_PERCENT: {
+        int pct = val.toInt();
+        if (pct < 1) {
+            pct = 1; // avoid zero or negative
+        }
+        setRollSpeedPercent(pct);
+        break;
+    }
     default:
         return EngravingItem::setProperty(propertyId, val);
     }
@@ -346,6 +356,8 @@ PropertyValue TremoloSingleChord::propertyDefault(Pid propertyId) const
         return style().styleI(Sid::tremoloStyle);
     case Pid::PLAY:
         return true;
+    case Pid::TREMOLO_ROLL_SPEED_PERCENT:
+        return 100;
     default:
         return EngravingItem::propertyDefault(propertyId);
     }

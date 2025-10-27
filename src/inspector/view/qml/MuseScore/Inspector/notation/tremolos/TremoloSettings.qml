@@ -68,4 +68,16 @@ Column {
         navigationPanel: root.navigationPanel
         navigationRowStart: root.navigationRowStart + 2
     }
+
+    SpinBoxPropertyView {
+        id: rollSpeedSection
+        titleText: qsTrc("inspector", "Roll speed (%)")
+        propertyItem: root.model ? root.model.rollSpeed : null
+        minValue: 1
+        maxValue: 400
+        step: 5
+
+        navigationPanel: root.navigationPanel
+        navigationRowStart: root.navigationRowStart + 3
+    }
 }
