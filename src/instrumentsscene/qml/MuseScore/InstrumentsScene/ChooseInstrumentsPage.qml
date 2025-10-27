@@ -85,26 +85,31 @@ Rectangle {
     function saveCurrentSet() {
         console.log("saveCurrentSet: Attempting to get IDs from C++...");
 
-        // 1. C++の Invokable メソッドを呼び出してIDリストを取得
-        var idList = root.instrumentsOnScoreModel.getCurrentInstrumentIds();
-        console.log("saveCurrentSet: Received IDs from C++:", JSON.stringify(idList));
+        // 1. C++の Invokable メソッドを呼び出してIDリスト(QVariantList)を取得
+        var rawIdList = root.instrumentsOnScoreModel.getCurrentInstrumentIds();
 
-        // 2. 取得したIDリストが有効かチェック
-        if (!idList || !Array.isArray(idList) || idList.length === 0) {
-             console.warn("Save failed: C++ method returned no valid IDs, or score panel is empty.");
-             // Optionally provide user feedback here (e.g., update a status label)
+        // 2. QVariantList を JavaScript の配列に変換
+        var idList = [];
+        if (rawIdList && rawIdList.length > 0) {
+            for (var i = 0; i < rawIdList.length; i++) {
+                idList.push(rawIdList[i]);
+            }
+        }
+        console.log("saveCurrentSet: Converted JS ID array:", JSON.stringify(idList));
+
+        // 3. 取得したIDリストが有効かチェック
+        if (idList.length === 0) {
+             console.warn("Save failed: Score panel is empty or C++ method returned no valid IDs.");
              return; // IDがなければ保存しない
         }
 
-        // 3. 既存のセットをロードして次のセット名を決定 ("お気に入りX" 形式)
+        // 4. 既存のセットをロードして次のセット名を決定 ("お気に入りX" 形式)
         var sets = instrumentSetRepositoryQml.loadSets();
         var maxNum = 0;
         var favoriteSets = sets.filter(function(item) {
-            // Check if setName exists, is a string, and starts with "お気に入り"
             return item.setName && typeof item.setName === 'string' && item.setName.startsWith("お気に入り");
         });
         favoriteSets.forEach(function(item) {
-            // Extract number using regex for safety
             var numMatch = item.setName.match(/^お気に入り(\d+)$/);
             if (numMatch && numMatch[1]) {
                 var num = parseInt(numMatch[1], 10);
@@ -115,30 +120,41 @@ Rectangle {
         });
         var newName = "お気に入り" + (maxNum + 1);
 
-        // 4. QMLリポジトリに保存
+        // 5. QMLリポジトリに保存
         console.log("Saving set:", newName, "with IDs:", JSON.stringify(idList));
         var saved = instrumentSetRepositoryQml.saveSet(newName, idList);
 
-        // 5. 保存後、モデルデータを再ロードしてUI (FavoritesView) を更新
+        // 6. 保存後、モデルデータを再ロードしてUI (FavoritesView) を更新
         if (saved) {
-            currentFavoritesModel = instrumentSetRepositoryQml.loadSets(); // Update the property bound to FavoritesView
+            currentFavoritesModel = instrumentSetRepositoryQml.loadSets();
             console.log("Successfully saved set:", newName);
         } else {
              console.error("Failed to save set:", newName);
-             // Optionally provide user feedback about the failure
         }
     }
 
     // Apply a favorite set (replace instruments in the score panel)
     function applyFavoriteSet(setData) {
-        // Validate the received data
-        if (!setData || !setData.instrumentIds || !Array.isArray(setData.instrumentIds) || setData.instrumentIds.length === 0) {
+        // 1. 受信したデータが有効か検証
+        if (!setData || !setData.instrumentIds) {
             console.warn("Apply failed: Invalid favorite set data received.", JSON.stringify(setData));
             return;
         }
-        console.log("Applying favorite set:", setData.setName, "with IDs:", JSON.stringify(setData.instrumentIds));
-        // Call the helper function in 'prv' object
-        prv.applyPresetIds(setData.instrumentIds);
+
+        // 2. 念のためJS配列に変換
+        var idsToApply = [];
+        for (var i = 0; i < setData.instrumentIds.length; i++) {
+            idsToApply.push(setData.instrumentIds[i]);
+        }
+
+        if (idsToApply.length === 0) {
+            console.warn("Apply failed: Favorite set contains no instrument IDs.");
+            return;
+        }
+
+        console.log("Applying favorite set:", setData.setName, "with IDs:", JSON.stringify(idsToApply));
+        // 3. 'prv' オブジェクトのヘルパー関数を呼び出す
+        prv.applyPresetIds(idsToApply);
     }
 
     // --- Visual ---
@@ -194,7 +210,7 @@ Rectangle {
         function applyPresetIds(ids) {
              // 1. Validate the input ID list
              if (!ids || !Array.isArray(ids) || ids.length === 0) {
-                 console.warn("applyPresetIds: Invalid ID list provided.");
+                 console.warn("applyPresetIds: Invalid ID list provided.", ids);
                  return;
              }
              // 2. Check if the C++ model is available
@@ -203,22 +219,23 @@ Rectangle {
                   return;
              }
 
-             // 3. Clear existing instruments (check if 'clear' exists)
+             // 3. Clear existing instruments (C++で追加したclear関数を呼び出す)
              if (typeof root.instrumentsOnScoreModel.clear === "function") {
                  console.log("applyPresetIds: Clearing existing instruments...");
                  root.instrumentsOnScoreModel.clear();
              } else {
                   console.warn("applyPresetIds: 'clear' function not found on model. Cannot clear existing instruments.");
-                  // Decide if you want to proceed adding without clearing, or stop
-                  // return; // Stop if clearing is essential
              }
 
              // 4. Add new instruments (check if 'addInstruments' exists)
              if (typeof root.instrumentsOnScoreModel.addInstruments === "function") {
                  console.log("applyPresetIds: Adding instruments:", JSON.stringify(ids));
-                 root.instrumentsOnScoreModel.addInstruments(ids);
-                 // 5. Scroll to end after a delay to ensure UI updates
-                 Qt.callLater(instrumentsOnScoreView.scrollViewToEnd);
+                 // 5. 少し遅延させてから追加処理を呼び出す (clear()の反映を待つため)
+                 Qt.callLater(function() {
+                     root.instrumentsOnScoreModel.addInstruments(ids);
+                     // 6. さらに遅延させてからUIをスクロール
+                     Qt.callLater(instrumentsOnScoreView.scrollViewToEnd);
+                 });
              } else {
                   console.error("applyPresetIds: 'addInstruments' function not found on model!");
              }
