@@ -51,11 +51,13 @@ constexpr int kMaxRollSpeedPercent = 400;
 
 namespace mu::engraving {
 int TremoloSingleChord::s_preferredRollSpeedPercent = 100;
+int TremoloSingleChord::s_preferredRollVolumePercent = 100;
 
 TremoloSingleChord::TremoloSingleChord(Chord* parent)
     : EngravingItem(ElementType::TREMOLO_SINGLECHORD, parent, ElementFlag::MOVABLE)
 {
     m_rollSpeedPercent = s_preferredRollSpeedPercent;
+    m_rollVolumePercent = s_preferredRollVolumePercent;
 }
 
 TremoloSingleChord::TremoloSingleChord(const TremoloSingleChord& t)
@@ -64,6 +66,7 @@ TremoloSingleChord::TremoloSingleChord(const TremoloSingleChord& t)
     setTremoloType(t.tremoloType());
     m_durationType = t.m_durationType;
     m_rollSpeedPercent = t.m_rollSpeedPercent;
+    m_rollVolumePercent = t.m_rollVolumePercent;
 }
 
 TremoloSingleChord::~TremoloSingleChord()
@@ -311,6 +314,23 @@ void TremoloSingleChord::setRollSpeedPercent(int v)
     setPreferredRollSpeedPercent(clamped);
 }
 
+void TremoloSingleChord::setPreferredRollVolumePercent(int percent)
+{
+    s_preferredRollVolumePercent = std::clamp(percent, kMinRollSpeedPercent, kMaxRollSpeedPercent);
+}
+
+void TremoloSingleChord::setRollVolumePercent(int v)
+{
+    const int clamped = std::clamp(v, kMinRollSpeedPercent, kMaxRollSpeedPercent);
+
+    if (m_rollVolumePercent == clamped) {
+        return;
+    }
+
+    m_rollVolumePercent = clamped;
+    setPreferredRollVolumePercent(clamped);
+}
+
 //---------------------------------------------------------
 //   getProperty
 //---------------------------------------------------------
@@ -327,6 +347,8 @@ PropertyValue TremoloSingleChord::getProperty(Pid propertyId) const
         return m_playTremolo;
     case Pid::TREMOLO_ROLL_SPEED_PERCENT:
         return m_rollSpeedPercent;
+    case Pid::TREMOLO_ROLL_VOLUME_PERCENT:
+        return m_rollVolumePercent;
     default:
         break;
     }
@@ -365,6 +387,13 @@ bool TremoloSingleChord::setProperty(Pid propertyId, const PropertyValue& val)
         }
         break;
     }
+    case Pid::TREMOLO_ROLL_VOLUME_PERCENT: {
+        setRollVolumePercent(val.toInt());
+        if (score()) {
+            score()->setPlaylistDirty();
+        }
+        break;
+    }
     default:
         return EngravingItem::setProperty(propertyId, val);
     }
@@ -384,6 +413,8 @@ PropertyValue TremoloSingleChord::propertyDefault(Pid propertyId) const
     case Pid::PLAY:
         return true;
     case Pid::TREMOLO_ROLL_SPEED_PERCENT:
+        return 100;
+    case Pid::TREMOLO_ROLL_VOLUME_PERCENT:
         return 100;
     default:
         return EngravingItem::propertyDefault(propertyId);
