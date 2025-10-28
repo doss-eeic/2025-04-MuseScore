@@ -425,6 +425,7 @@ static constexpr PropertyMetaData propertyList[] = {
     { Pid::TREMOLOBAR_TYPE,         true,  "tremoloBarType",        P_TYPE::INT,                PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "tremolobar type") },
     { Pid::TREMOLOBAR_CURVE,        true,  "tremoloBarCurve",       P_TYPE::PITCH_VALUES,       PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "tremolobar curve") },
     { Pid::TREMOLO_ROLL_SPEED_PERCENT, false, "tremoloRollSpeedPercent", P_TYPE::INT,           PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "tremolo roll speed (%)") },
+    { Pid::TREMOLO_ROLL_VOLUME_PERCENT, false, "tremoloRollVolumePercent", P_TYPE::INT,        PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "tremolo roll volume (%)") },
 
     { Pid::START_WITH_LONG_NAMES,   false, "startWithLongNames",    P_TYPE::BOOL,               PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "start with long names") },
     { Pid::START_WITH_MEASURE_ONE,  true,  "startWithMeasureOne",   P_TYPE::BOOL,               PropertyGroup::APPEARANCE,      QT_TRANSLATE_NOOP("engraving/propertyName", "start with measure one") },

@@ -22,6 +22,8 @@
 
 #include "tremolorenderer.h"
 
+#include <algorithm>
+
 #include "dom/chord.h"
 #include "dom/tremolosinglechord.h"
 #include "dom/tremolotwochord.h"
@@ -246,7 +248,7 @@ void TremoloRenderer::buildAndAppendEvents(const Chord* chord, const Articulatio
         auto noteTnD = timestampAndDurationFromStartAndDurationTicks(
             ctx.score, startTick, stepDurationTicks, ctx.positionTickOffset);
 
-        NominalNoteCtx noteCtx(note, ctx);
+    NominalNoteCtx noteCtx(note, ctx);
         noteCtx.duration = noteTnD.duration;
         noteCtx.timestamp = noteTnD.timestamp;
 
@@ -254,6 +256,18 @@ void TremoloRenderer::buildAndAppendEvents(const Chord* chord, const Articulatio
         noteCtx.dynamicLevel = ctx.playbackCtx->appliableDynamicLevel(note->track(), utick);
 
         NoteArticulationsParser::buildNoteArticulationMap(note, ctx, noteCtx.articulations);
+
+        if (type == ArticulationType::Tremolo32nd) {
+            if (const auto* sc = chord->tremoloSingleChord()) {
+                if (sc->lines() == 3) {
+                    const int volPct = sc->rollVolumePercent();
+                    int scaled = static_cast<int>(noteCtx.dynamicLevel) * volPct / 100;
+                    noteCtx.dynamicLevel = std::clamp(static_cast<mpe::dynamic_level_t>(scaled),
+                                                       mpe::MIN_DYNAMIC_LEVEL,
+                                                       mpe::MAX_DYNAMIC_LEVEL);
+                }
+            }
+        }
 
         const TimestampAndDuration& tremoloTnD = tremoloTimeAndDuration(note, ctx, tremoloCache);
         muse::mpe::ArticulationAppliedData& articulationData = noteCtx.articulations.at(type);

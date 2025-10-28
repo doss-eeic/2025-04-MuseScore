@@ -80,4 +80,16 @@ Column {
         navigationPanel: root.navigationPanel
         navigationRowStart: root.navigationRowStart + 3
     }
+
+    SpinBoxPropertyView {
+        id: rollVolumeSection
+        titleText: qsTrc("inspector", "Roll volume (%)")
+            propertyItem: root.model ? root.model.rollVolume : null
+        minValue: 1
+        maxValue: 400
+        step: 5
+
+        navigationPanel: root.navigationPanel
+        navigationRowStart: root.navigationRowStart + 4
+    }
 }

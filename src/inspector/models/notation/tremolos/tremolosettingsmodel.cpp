@@ -45,6 +45,14 @@ void TremoloSettingsModel::createProperties()
     m_style = buildPropertyItem(mu::engraving::Pid::TREMOLO_STYLE);
     m_direction = buildPropertyItem(mu::engraving::Pid::STEM_DIRECTION);
     m_rollSpeed = buildPropertyItem(mu::engraving::Pid::TREMOLO_ROLL_SPEED_PERCENT);
+    m_rollVolume = buildPropertyItem(mu::engraving::Pid::TREMOLO_ROLL_VOLUME_PERCENT);
+    
+    connect(m_rollSpeed, &PropertyItem::propertyModified, this, [this]() {
+        mu::engraving::TremoloSingleChord::setPreferredRollSpeedPercent(m_rollSpeed->value().toInt());
+    });
+    connect(m_rollVolume, &PropertyItem::propertyModified, this, [this]() {
+        mu::engraving::TremoloSingleChord::setPreferredRollVolumePercent(m_rollVolume->value().toInt());
+    });
 }
 
 void TremoloSettingsModel::requestElements()
@@ -88,19 +96,28 @@ void TremoloSettingsModel::loadProperties(const PropertyIdSet& propertyIdSet)
     if (muse::contains(propertyIdSet, Pid::STEM_DIRECTION)) {
         loadPropertyItem(m_direction);
     }
-    if (hasSingleR32 && muse::contains(propertyIdSet, Pid::TREMOLO_ROLL_SPEED_PERCENT)) {
-        loadPropertyItem(m_rollSpeed);
+    if (hasSingleR32) {
+        if (muse::contains(propertyIdSet, Pid::TREMOLO_ROLL_SPEED_PERCENT)) {
+            loadPropertyItem(m_rollSpeed);
+        }
+        if (muse::contains(propertyIdSet, Pid::TREMOLO_ROLL_VOLUME_PERCENT)) {
+            loadPropertyItem(m_rollVolume);
+        }
     }
     
     if (m_rollSpeed) {
         m_rollSpeed->setIsVisible(hasSingleR32);
         m_rollSpeed->setIsEnabled(hasSingleR32);
     }
+    if (m_rollVolume) {
+        m_rollVolume->setIsVisible(hasSingleR32);
+        m_rollVolume->setIsEnabled(hasSingleR32);
+    }
 }
 
 void TremoloSettingsModel::loadProperties()
 {
-    loadProperties(PropertyIdSet { Pid::TREMOLO_STYLE, Pid::STEM_DIRECTION, Pid::TREMOLO_ROLL_SPEED_PERCENT });
+    loadProperties(PropertyIdSet { Pid::TREMOLO_STYLE, Pid::STEM_DIRECTION, Pid::TREMOLO_ROLL_SPEED_PERCENT, Pid::TREMOLO_ROLL_VOLUME_PERCENT });
 }
 
 void TremoloSettingsModel::resetProperties()
@@ -128,4 +145,9 @@ PropertyItem* TremoloSettingsModel::direction() const
 PropertyItem* TremoloSettingsModel::rollSpeed() const
 {
     return m_rollSpeed;
+}
+
+PropertyItem* TremoloSettingsModel::rollVolume() const
+{
+    return m_rollVolume;
 }
