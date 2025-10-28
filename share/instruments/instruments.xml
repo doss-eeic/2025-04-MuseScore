@@ -7323,6 +7323,16 @@
                         <panelRow>0</panelRow>
                         <panelColumn>0</panelColumn>
                   </Drum>
+                  <Drum pitch="45"> <!--Low Tom used as Snares Off-->
+                        <head>normal</head>
+                        <line>0</line>
+                        <voice>0</voice>
+                        <name>Snares Off</name>
+                        <stem>1</stem>
+                        <shortcut>O</shortcut>
+                        <panelRow>0</panelRow>
+                        <panelColumn>2</panelColumn>
+                  </Drum>
                   <Channel>
                         <!--MIDI: Bank 128, Prog 48; MS General: Orchestra Kit-->
                         <controller ctrl="0" value="1"/> <!--Bank MSB-->
@@ -8421,6 +8431,16 @@
                         <shortcut>A</shortcut>
                         <panelRow>0</panelRow>
                         <panelColumn>0</panelColumn>
+                  </Drum>
+                  <Drum pitch="45"> <!--Low Tom used as Snares Off-->
+                        <head>normal</head>
+                        <line>0</line>
+                        <voice>0</voice>
+                        <name>Snares Off</name>
+                        <stem>1</stem>
+                        <shortcut>O</shortcut>
+                        <panelRow>0</panelRow>
+                        <panelColumn>2</panelColumn>
                   </Drum>
                   <Channel>
                         <!--MIDI: Bank 128, Prog 48; MS General: Orchestra Kit-->
@@ -11069,6 +11089,16 @@
                         <shortcut>A</shortcut>
                         <panelRow>0</panelRow>
                         <panelColumn>0</panelColumn>
+                  </Drum>
+                  <Drum pitch="45"> <!--Low Tom used as Snares Off-->
+                        <head>normal</head>
+                        <line>1</line>
+                        <voice>0</voice>
+                        <name>Snares Off</name>
+                        <stem>1</stem>
+                        <shortcut>O</shortcut>
+                        <panelRow>0</panelRow>
+                        <panelColumn>2</panelColumn>
                   </Drum>
                   <Drum pitch="52"> <!--Chinese Cymbal-->
                         <head>normal</head>
