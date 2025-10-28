@@ -4750,6 +4750,14 @@ QT_TRANSLATE_NOOP3("engraving/instruments", "Stamp", "stamp longName"),
 //: shortName for Stamp; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
 QT_TRANSLATE_NOOP3("engraving/instruments", "Sta.", "stamp shortName"),
 
+//: description for Thigh; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Thigh slap.", "thigh description"),
+//: trackName for Thigh; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Thigh", "thigh trackName"),
+//: longName for Thigh; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Thigh", "thigh longName"),
+//: shortName for Thigh; Please see https://github.com/musescore/MuseScore/wiki/Translating-instrument-names
+QT_TRANSLATE_NOOP3("engraving/instruments", "Thi.", "thigh shortName"),
 // Vocals
 QT_TRANSLATE_NOOP("engraving/instruments/group", "Vocals"),
 

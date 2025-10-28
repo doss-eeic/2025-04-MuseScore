@@ -795,11 +795,11 @@ static const auto& mappingByCategory(const mpe::SoundCategory category)
                                      mpe::SoundSubCategory::Metal,
                                      mpe::SoundSubCategory::Crash } }, { midi::Program(128, 58) } },
 
-        { { mpe::SoundId::Snap,  { mpe::SoundSubCategory::Finger } }, { midi::Program(128, 0) } },
+    { { mpe::SoundId::Snap,  { mpe::SoundSubCategory::Finger } }, { midi::Program(128, 0) } },
         { { mpe::SoundId::Clap,  { mpe::SoundSubCategory::Hand } }, { midi::Program(128, 0) } },
         { { mpe::SoundId::Slap,  { mpe::SoundSubCategory::Hand } }, { midi::Program(128, 0) } },
         { { mpe::SoundId::Stamp,  { mpe::SoundSubCategory::Foot } }, { midi::Program(128, 0) } },
-
+        { { mpe::SoundId::Thigh, { mpe::SoundSubCategory::Foot } }, { midi::Program(128, 48) } },
         { { mpe::SoundId::Taiko, {} }, { midi::Program(128, 0) } },
 
         { { mpe::SoundId::Synthesizer,  { mpe::SoundSubCategory::Electric,
