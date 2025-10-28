@@ -236,7 +236,8 @@ PlaybackSetupData PercussionsSetupDataResolver::doResolve(const Instrument* inst
         { "finger-snap", { SoundId::Snap, SoundCategory::Percussions, { SoundSubCategory::Finger } } },
         { "hand-clap", { SoundId::Clap, SoundCategory::Percussions, { SoundSubCategory::Hand } } },
         { "slap", { SoundId::Slap, SoundCategory::Percussions, { SoundSubCategory::Hand } } },
-        { "stamp", { SoundId::Stamp, SoundCategory::Percussions, { SoundSubCategory::Foot } } },
+    { "stamp", { SoundId::Stamp, SoundCategory::Percussions, { SoundSubCategory::Foot } } },
+    { "thigh", { SoundId::Thigh, SoundCategory::Percussions, { SoundSubCategory::Foot } } },
 
         { "taiko", { SoundId::Taiko, SoundCategory::Percussions } },
 
