@@ -125,7 +125,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Clone repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Prepare dummy artifact
       run: |
         ARTIFACTS_DIR="build.artifacts"
@@ -161,7 +161,7 @@ jobs:
         UPLOAD_ARTIFACT_NAME="$(tr '":<>|*?/\\’' '_' <<<"MU4_${BUILD_NUMBER}_Dummy-${{ matrix.os }}_${BUILD_BRANCH}")"
         echo "UPLOAD_ARTIFACT_NAME=${UPLOAD_ARTIFACT_NAME}" | tee -a "${GITHUB_ENV}"
     - name: Upload artifacts to GitHub
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ env.UPLOAD_ARTIFACT_NAME }}
         path: ${{ env.ARTIFACTS_DIR }}
